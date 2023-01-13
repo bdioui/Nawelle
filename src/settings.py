@@ -31,7 +31,7 @@ ASGI_APPLICATION = f'{config("PROJECT_NAME")}.routing.application'
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ''
+SECRET_KEY = 'django-insecure-iowkbybg090&9npe6x&@x$kc&74d6j*+ul8tp1c#uz7t*cfubj'
 
 # Application definition
 
@@ -121,5 +121,4 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'CodingWithMitch Team <noreply@codingwithmitch.com>'
 
-
-BASE_URL = "http://<ip_from_digital_ocean>"
+BASE_URL = "http://68.183.82.143"
