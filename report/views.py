@@ -10,7 +10,11 @@ from .forms import AccountAuthenticationForm, Create_Note
 from django.shortcuts import render, redirect
 from datetime import date
 from django.views.generic import View, ListView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
+
+@login_required
 def index(request):
     if request.method == 'POST':
         feder_form = CSV_load(request.POST, request.FILES)
@@ -60,6 +64,7 @@ def index(request):
 
         return render(request, 'report/index.html', context)
 
+@login_required
 def add_dossier(request):
     if request.method == "POST":
         form = dossier_form(request.POST)
@@ -90,12 +95,14 @@ def delete(request, pk):
     messages.add_message(request, messages.INFO, 'Dossier supprimé !')
     return redirect('report:index')
 
+
 def delete_note(request, pk, id):
     Note.objects.get(pk=pk).delete()
     messages.add_message(request, messages.INFO, 'Note supprimé !')
     next = request.POST.get('next', '/')
     return redirect('report:fiche_dossier', id)
 
+@login_required
 def fiche_dossier(request, pk):
     projet = dossier.objects.get(pk=pk)
     note = Note.objects.filter(identifier=pk)
@@ -104,6 +111,7 @@ def fiche_dossier(request, pk):
     notif = Notification.objects.filter(nature="note")
     context = {'dossier': projet, 'note':note, 'files':files, 'todo':todo, 'notif':notif}
     return render(request, 'report/dossier.html', context)
+
 
 def Nouvelle_Note(request, pk):
     if request.method == "POST":
