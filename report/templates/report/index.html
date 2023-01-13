@@ -1,0 +1,1907 @@
+{% load static %}
+{% load humanize %}
+{% load dash_filters %}
+
+
+<html lang="en">
+<head>
+  <!-- Required Meta Tags Always Come First -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Title -->
+  <title>Tableau de bord | Braintag </title>
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{% static 'img/logo.svg' %}">
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- CSS Implementing Plugins -->
+  <link rel="stylesheet" href="{% static 'vendor/bootstrap-icons/font/bootstrap-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/daterangepicker/daterangepicker.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/tom-select/dist/css/tom-select.bootstrap5.css' %}">
+
+  <!-- CSS Front Template -->
+
+  <link href="{% static 'css/theme.min.css' %}" data-hs-appearance="default" as="style">
+  <link href="{% static 'css/theme-dark.min.css' %}" data-hs-appearance="dark" as="style">
+
+  <style data-hs-appearance-onload-styles>
+    *
+    {
+      transition: unset !important;
+    }
+
+    body
+    {
+      opacity: 0;
+    }
+  </style>
+
+  <style>
+    #import_op {
+    border-radius:15px;
+    }
+    .input-file {
+        display:None;
+    }
+
+    .label-file {
+    cursor: pointer;
+    color: #00b1ca;
+    font-weight: bold;
+}
+    #submit_feder {
+    display:None;
+    }
+
+    .alert {
+    positition: relative;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0px);
+    transition: visibility 0s, opacity 250ms, transform 250ms;
+    }
+    .alert.hide {
+        positition: relative;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(-10px); // translateX, translateY, translateZ works well
+        transition: visibility 0s 250ms, opacity 250ms, transform 250ms;
+    }
+  </style>
+
+  <script>
+            window.hs_config = {"autopath":"@@autopath","deleteLine":"hs-builder:delete","deleteLine:build":"hs-builder:build-delete","deleteLine:dist":"hs-builder:dist-delete","previewMode":false,"startPath":"/index.html","vars":{"themeFont":"https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap","version":"?v=1.0"},"layoutBuilder":{"extend":{"switcherSupport":true},"header":{"layoutMode":"default","containerMode":"container-fluid"},"sidebarLayout":"default"},"themeAppearance":{"layoutSkin":"default","sidebarSkin":"default","styles":{"colors":{"primary":"#377dff","transparent":"transparent","white":"#fff","dark":"132144","gray":{"100":"#f9fafc","900":"#1e2022"}},"font":"Inter"}},"languageDirection":{"lang":"en"},"skipFilesFromBundle":{"dist":["assets/js/hs.theme-appearance.js","assets/js/hs.theme-appearance-charts.js","assets/js/demo.js"],"build":["assets/css/theme.css","assets/vendor/hs-navbar-vertical-aside/dist/hs-navbar-vertical-aside-mini-cache.js","assets/js/demo.js","assets/css/theme-dark.css","assets/css/docs.css","assets/vendor/icon-set/style.css","assets/js/hs.theme-appearance.js","assets/js/hs.theme-appearance-charts.js","node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js","assets/js/demo.js"]},"minifyCSSFiles":["assets/css/theme.css","assets/css/theme-dark.css"],"copyDependencies":{"dist":{"*assets/js/theme-custom.js":""},"build":{"*assets/js/theme-custom.js":"","node_modules/bootstrap-icons/font/*fonts/**":"assets/css"}},"buildFolder":"","replacePathsToCDN":{},"directoryNames":{"src":"./src","dist":"./dist","build":"./build"},"fileNames":{"dist":{"js":"theme.min.js","css":"theme.min.css"},"build":{"css":"theme.min.css","js":"theme.min.js","vendorCSS":"vendor.min.css","vendorJS":"vendor.min.js"}},"fileTypes":"jpg|png|svg|mp4|webm|ogv|json"}
+            window.hs_config.gulpRGBA = (p1) => {
+  const options = p1.split(',')
+  const hex = options[0].toString()
+  const transparent = options[1].toString()
+
+  var c;
+  if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+    c= hex.substring(1).split('');
+    if(c.length== 3){
+      c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+    }
+    c= '0x'+c.join('');
+    return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + transparent + ')';
+  }
+  throw new Error('Bad Hex');
+}
+            window.hs_config.gulpDarken = (p1) => {
+  const options = p1.split(',')
+
+  let col = options[0].toString()
+  let amt = -parseInt(options[1])
+  var usePound = false
+
+  if (col[0] == "#") {
+    col = col.slice(1)
+    usePound = true
+  }
+  var num = parseInt(col, 16)
+  var r = (num >> 16) + amt
+  if (r > 255) {
+    r = 255
+  } else if (r < 0) {
+    r = 0
+  }
+  var b = ((num >> 8) & 0x00FF) + amt
+  if (b > 255) {
+    b = 255
+  } else if (b < 0) {
+    b = 0
+  }
+  var g = (num & 0x0000FF) + amt
+  if (g > 255) {
+    g = 255
+  } else if (g < 0) {
+    g = 0
+  }
+  return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16)
+}
+            window.hs_config.gulpLighten = (p1) => {
+  const options = p1.split(',')
+
+  let col = options[0].toString()
+  let amt = parseInt(options[1])
+  var usePound = false
+
+  if (col[0] == "#") {
+    col = col.slice(1)
+    usePound = true
+  }
+  var num = parseInt(col, 16)
+  var r = (num >> 16) + amt
+  if (r > 255) {
+    r = 255
+  } else if (r < 0) {
+    r = 0
+  }
+  var b = ((num >> 8) & 0x00FF) + amt
+  if (b > 255) {
+    b = 255
+  } else if (b < 0) {
+    b = 0
+  }
+  var g = (num & 0x0000FF) + amt
+  if (g > 255) {
+    g = 255
+  } else if (g < 0) {
+    g = 0
+  }
+  return (usePound ? "#" : "") + (g | (b << 8) | (r << 16)).toString(16)
+}
+</script>
+</head>
+
+<body class="has-navbar-vertical-aside navbar-vertical-aside-show-xl   footer-offset">
+
+  <script src="{% static 'js/hs.theme-appearance.js' %}"></script>
+
+  <script src="{% static 'vendor/hs-navbar-vertical-aside/dist/hs-navbar-vertical-aside-mini-cache.js' %}"></script>
+
+  <!-- ========== HEADER ========== -->
+
+   <header id="header" class="navbar navbar-expand-lg navbar-fixed navbar-height navbar-container navbar-bordered bg-white">
+    <div class="navbar-nav-wrap">
+      <!-- Logo -->
+      <a class="navbar-brand" href="#" aria-label="Front">
+        <img class="navbar-brand-logo" style="width:30px !important; min-width:0px !important;" src="{%static 'img/logo.svg'%}" alt="Logo" data-hs-theme-appearance="default">
+        <img class="navbar-brand-logo" style="width:30px !important; min-width:0px !important;" src="{%static 'img/logo.svg'%}" alt="Logo" data-hs-theme-appearance="dark">
+        <img class="navbar-brand-logo-mini" style="width:30px !important; min-width:0px !important;" src="{%static 'img/logo.svg'%}" alt="Logo" data-hs-theme-appearance="default">
+        <img class="navbar-brand-logo-mini" style="width:30px !important; min-width:0px !important;" src="{%static 'img/logo.svg'%}" alt="Logo" data-hs-theme-appearance="dark">
+      </a>
+      <!-- End Logo -->
+
+      <div class="navbar-nav-wrap-content-start">
+        <!-- Navbar Vertical Toggle -->
+        <button type="button" class="js-navbar-vertical-aside-toggle-invoker navbar-aside-toggler">
+          <i class="bi-arrow-bar-left navbar-toggler-short-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Collapse"></i>
+          <i class="bi-arrow-bar-right navbar-toggler-full-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Expand"></i>
+        </button>
+
+        <!-- End Navbar Vertical Toggle -->
+
+        <!-- Search Form -->
+        <div class="dropdown ms-2">
+          <!-- Input Group -->
+          <div class="d-none d-lg-block" style="display:none !important;">
+            <div class="input-group input-group-merge input-group-borderless input-group-hover-light navbar-input-group">
+              <div class="input-group-prepend input-group-text">
+                <i class="bi-search"></i>
+              </div>
+
+              <input type="search" class="js-form-search form-control" placeholder="Search in front" aria-label="Search in front" data-hs-form-search-options='{
+                       "clearIcon": "#clearSearchResultsIcon",
+                       "dropMenuElement": "#searchDropdownMenu",
+                       "dropMenuOffset": 20,
+                       "toggleIconOnFocus": true,
+                       "activeClass": "focus"
+                     }'>
+              <a class="input-group-append input-group-text" href="javascript:;">
+                <i id="clearSearchResultsIcon" class="bi-x-lg" style="display: none;"></i>
+              </a>
+            </div>
+          </div>
+
+          <button class="js-form-search js-form-search-mobile-toggle btn btn-ghost-secondary btn-icon rounded-circle d-lg-none" type="button" data-hs-form-search-options='{
+                       "clearIcon": "#clearSearchResultsIcon",
+                       "dropMenuElement": "#searchDropdownMenu",
+                       "dropMenuOffset": 20,
+                       "toggleIconOnFocus": true,
+                       "activeClass": "focus"
+                     }'>
+            <i class="bi-search"></i>
+          </button>
+          <!-- End Input Group -->
+
+          <!-- Card Search Content -->
+          <div id="searchDropdownMenu" class="hs-form-search-menu-content dropdown-menu dropdown-menu-form-search navbar-dropdown-menu-borderless">
+            <div class="card">
+              <!-- Body -->
+              <div class="card-body-height">
+                <div class="d-lg-none">
+                  <div class="input-group input-group-merge navbar-input-group mb-5">
+                    <div class="input-group-prepend input-group-text">
+                      <i class="bi-search"></i>
+                    </div>
+
+                    <input type="search" class="form-control" placeholder="Search in front" aria-label="Search in front">
+                    <a class="input-group-append input-group-text" href="javascript:;">
+                      <i class="bi-x-lg"></i>
+                    </a>
+                  </div>
+                </div>
+
+                <span class="dropdown-header">Recent searches</span>
+
+                <div class="dropdown-item bg-transparent text-wrap">
+                  <a class="btn btn-soft-dark btn-xs rounded-pill" href="">
+                    Gulp <i class="bi-search ms-1"></i>
+                  </a>
+                  <a class="btn btn-soft-dark btn-xs rounded-pill" href="{% url 'report:index' %}">
+                    Notification panel <i class="bi-search ms-1"></i>
+                  </a>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <span class="dropdown-header">Tutorials</span>
+
+                <a class="dropdown-item" href="{% url 'report:index' %}">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <span class="icon icon-soft-dark icon-xs icon-circle">
+                        <i class="bi-sliders"></i>
+                      </span>
+                    </div>
+
+                    <div class="flex-grow-1 text-truncate ms-2">
+                      <span>How to set up Gulp?</span>
+                    </div>
+                  </div>
+                </a>
+
+                <a class="dropdown-item" href="{% url 'report:index' %}">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <span class="icon icon-soft-dark icon-xs icon-circle">
+                        <i class="bi-paint-bucket"></i>
+                      </span>
+                    </div>
+
+                    <div class="flex-grow-1 text-truncate ms-2">
+                      <span>How to change theme color?</span>
+                    </div>
+                  </div>
+                </a>
+
+                <div class="dropdown-divider"></div>
+
+                <span class="dropdown-header">Members</span>
+
+                <a class="dropdown-item" href="{% url 'report:index' %}">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <img class="avatar avatar-xs avatar-circle" src="{%static 'img/160x160/img10.jpg'%}" alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 text-truncate ms-2">
+                      <span>Amanda Harvey <i class="tio-verified text-primary" data-toggle="tooltip" data-placement="top" title="Top endorsed"></i></span>
+                    </div>
+                  </div>
+                </a>
+
+                <a class="dropdown-item" href="{% url 'report:index' %}">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <img class="avatar avatar-xs avatar-circle" src="{%static 'img/160x160/img3.jpg'%}" alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 text-truncate ms-2">
+                      <span>David Harrison</span>
+                    </div>
+                  </div>
+                </a>
+
+                <a class="dropdown-item" href="{% url 'report:index' %}">
+                  <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                      <div class="avatar avatar-xs avatar-soft-info avatar-circle">
+                        <span class="avatar-initials">A</span>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1 text-truncate ms-2">
+                      <span>Anne Richard</span>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <!-- End Body -->
+
+              <!-- Footer -->
+              <a class="card-footer text-center" href="{% url 'report:index' %}">
+                See all results <i class="bi-chevron-right small"></i>
+              </a>
+              <!-- End Footer -->
+            </div>
+          </div>
+          <!-- End Card Search Content -->
+
+        </div>
+
+        <!-- End Search Form -->
+      </div>
+
+      <div class="navbar-nav-wrap-content-end">
+        <!-- Navbar -->
+        <ul class="navbar-nav">
+          <li class="nav-item d-none d-sm-inline-block">
+            <!-- Activity -->
+            <button class="btn btn-ghost-secondary btn-icon rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasActivityStream" aria-controls="offcanvasActivityStream">
+              <i class="bi-x-diamond"></i>
+            </button>
+            <!-- Activity -->
+          </li>
+
+          <li class="nav-item">
+            <!-- Account -->
+            <div class="dropdown">
+              <a class="navbar-dropdown-account-wrapper" href="javascript:;" id="accountNavbarDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside" data-bs-dropdown-animation>
+                <div class="nav-item d-none d-sm-inline-block">
+                  <i class="bi bi-three-dots"></i>
+
+                </div>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-end navbar-dropdown-menu navbar-dropdown-menu-borderless navbar-dropdown-account" aria-labelledby="accountNavbarDropdown" style="width: 16rem;">
+                <div class="dropdown-item-text">
+                  <div class="d-flex align-items-center">
+                    <div class="avatar avatar-sm avatar-circle">
+                      <img class="avatar-img" src="{% static 'img/profile.png' %}" alt="Image Description">
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                      <h5 class="mb-0"></h5>
+                      <p class="card-text text-body"></p>
+                    {{user.username}}
+                  </div>
+                </div>
+
+                <div class="dropdown-divider"></div>
+
+                <!-- Dropdown -->
+                <a class="dropdown-item" href="{% url 'report:signOut' %}">Se déconnecter</a>
+              </div>
+            </div>
+            <!-- End Account -->
+          </li>
+        </ul>
+        <!-- End Navbar -->
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== END HEADER ========== -->
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <!-- Navbar Vertical -->
+
+
+  <aside class="js-navbar-vertical-aside navbar navbar-vertical-aside navbar-vertical navbar-vertical-fixed navbar-expand-xl navbar-bordered bg-white  ">
+    <div class="navbar-vertical-container">
+      <div class="navbar-vertical-footer-offset">
+        <!-- Logo -->
+        <a class="navbar-brand" href="{% url 'report:index' %}" aria-label="Front">
+          <img class="navbar-brand-logo" src="{%static 'img/logo_long.svg'%}" alt="Logo" data-hs-theme-appearance="default">
+          <img class="navbar-brand-logo" src="{%static 'img/logo_dark.svg'%}" alt="Logo" data-hs-theme-appearance="dark">
+          <img class="navbar-brand-logo-mini" src="{%static 'img/logo.png'%}" alt="Logo" data-hs-theme-appearance="default">
+          <img class="navbar-brand-logo-mini" src="{%static 'img/logo.svg'%}" alt="Logo" data-hs-theme-appearance="dark">
+        </a>
+
+        <!-- End Logo -->
+
+        <!-- Navbar Vertical Toggle -->
+        <button type="button" class="js-navbar-vertical-aside-toggle-invoker navbar-aside-toggler">
+          <i class="bi-arrow-bar-left navbar-toggler-short-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Collapse"></i>
+          <i class="bi-arrow-bar-right navbar-toggler-full-align" data-bs-template='<div class="tooltip d-none d-md-block" role="tooltip"><div class="arrow"></div><div class="tooltip-inner"></div></div>' data-bs-toggle="tooltip" data-bs-placement="right" title="Expand"></i>
+        </button>
+
+        <!-- End Navbar Vertical Toggle -->
+
+        <!-- Content -->
+        <div class="navbar-vertical-content">
+          <div id="navbarVerticalMenu" class="nav nav-pills nav-vertical card-navbar-nav">
+            <!-- Collapse -->
+            <div class="nav-item">
+              <a class="nav-link dropdown-toggle active" href="#navbarVerticalMenuDashboards" role="button" data-bs-toggle="collapse" data-bs-target="#navbarVerticalMenuDashboards" aria-expanded="true" aria-controls="navbarVerticalMenuDashboards">
+                <i class="bi bi-file-earmark-bar-graph"></i>
+                <span class="nav-link-title">Tableau de bord</span>
+              </a>
+
+              <div id="navbarVerticalMenuDashboards" class="nav-collapse collapse show" data-bs-parent="#navbarVerticalMenu">
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label id="label" for="import_op" class="nav-link"><i class="bi bi-arrow-clockwise me-3"></i>Actualiser</label>
+                    <input id="import_op" name="import_op" class="input-file btn-btn-primary" type="file" onchange="this.form.submit()">
+                </form>
+                <a href="{% url 'report:export_data' %}" class="nav-link"><i class="bi bi-filetype-xlsx me-3"></i>Export</a>
+              </div>
+            </div>
+            <!-- End Collapse -->
+
+
+        <!-- End Content -->
+
+        <!-- Footer -->
+        <div class="navbar-vertical-footer">
+          <ul class="navbar-vertical-footer-list">
+            <li class="navbar-vertical-footer-list-item">
+              <!-- Style Switcher -->
+              <div class="dropdown dropup">
+                <button type="button" class="btn btn-ghost-secondary btn-icon rounded-circle" id="selectThemeDropdown" data-bs-toggle="dropdown" aria-expanded="false" data-bs-dropdown-animation>
+
+                </button>
+
+                <div class="dropdown-menu navbar-dropdown-menu navbar-dropdown-menu-borderless" aria-labelledby="selectThemeDropdown">
+                  <a class="dropdown-item" href="#" data-icon="bi-moon-stars" data-value="auto">
+                    <i class="bi-moon-stars me-2"></i>
+                    <span class="text-truncate" title="Auto (system default)">Auto (system default)</span>
+                  </a>
+                  <a class="dropdown-item" href="#" data-icon="bi-brightness-high" data-value="default">
+                    <i class="bi-brightness-high me-2"></i>
+                    <span class="text-truncate" title="Default (light mode)">Default (light mode)</span>
+                  </a>
+                  <a class="dropdown-item active" href="#" data-icon="bi-moon" data-value="dark">
+                    <i class="bi-moon me-2"></i>
+                    <span class="text-truncate" title="Dark">Dark</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- End Style Switcher -->
+            </li>
+          </ul>
+        </div>
+        <!-- End Footer -->
+      </div>
+    </div>
+  </aside>
+
+  <!-- End Navbar Vertical -->
+
+  <main id="content" role="main" class="main">
+    <!-- Content -->
+    <div class="content container-fluid">
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="row align-items-center">
+          <div class="col">
+            <h1 class="page-header-title">Tableau de bord</h1>
+          </div>
+          <!-- End Col -->
+           {% block messages %}
+                <ul class="messages" id="messages-list">
+                {% if messages %}
+                    {% for message in messages %}
+                    <li>
+                        {% if message.tags %}
+                             <div class="bg-primary alert alert-{{ message.tags }} msg fade show" role="alert">{{ message }}</div>
+                        {% else %}
+                            <div class="alert alert-info msg fade show" role="alert">{{ message }}</div>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                {% endif %}
+                </ul>
+        {% endblock %}
+
+
+          <!-- End Col -->
+        </div>
+        <!-- End Row -->
+      </div>
+      <!-- End Page Header -->
+
+      <!-- Stats -->
+      <!-- Card -->
+      <div class="card card-body mb-3 mb-lg-5">
+        <div class="row col-lg-divider gx-lg-6">
+          <div class="col-lg-3">
+            <!-- Media -->
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="card-subtitle mb-3">Dossiers en cours</h6>
+                <h3 class="card-title">{{nb_projets}}</h3>
+              </div>
+
+              <span class="icon icon-soft-secondary icon-sm icon-circle ms-3">
+                <i class="bi-folder"></i>
+              </span>
+            </div>
+            <!-- End Media -->
+          </div>
+          <!-- End Col -->
+
+          <div class="col-lg-3">
+            <!-- Media -->
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="card-subtitle mb-3">Volume de vente</h6>
+                <h3 class="card-title"> {{Vol_vente.y_mb__sum|intcomma}} €</h3>
+              </div>
+               <span class="icon icon-soft-secondary icon-sm icon-circle ms-3">
+                <i class="bi bi-currency-euro"></i>
+              </span>
+
+            </div>
+            <!-- End Media -->
+          </div>
+          <!-- End Col -->
+          <div class="col-lg-3">
+            <!-- Media -->
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="card-subtitle mb-3">Volume de vente (kg)</h6>
+                <h3 class="card-title">{{Vol_vente_kg.y_vol__sum|intcomma}}</h3>
+              </div>
+
+              <span class="icon icon-soft-secondary icon-sm icon-circle ms-3">
+                <i class="bi bi-currency-euro"></i>
+              </span>
+            </div>
+            <!-- End Media -->
+          </div>
+
+          <div class="col-lg-3">
+            <!-- Media -->
+            <div class="d-flex">
+              <div class="flex-grow-1">
+                <h6 class="card-subtitle mb-3">Taux de conversion</h6>
+                <h3 class="card-title"></h3>
+
+                <div class="d-flex align-items-center">
+                  <h3 class="card-title">{{nb_closed_win|divide:nb_projets}} %</h3>
+                </div>
+              </div>
+
+              <span class="icon icon-soft-secondary icon-sm icon-circle ms-3">
+                <i class="bi-percent"></i>
+              </span>
+            </div>
+            <!-- End Media -->
+          </div>
+          <!-- End Col -->
+
+          <!-- End Col -->
+        </div>
+        <!-- End Row -->
+      </div>
+      <!-- End Card -->
+      <!-- End Stats -->
+
+      <div class="row">
+        <div class="col-lg-6">
+          <!-- Card -->
+          <div class="card h-100">
+            <!-- Header -->
+            <div class="card-header card-header-content-between">
+              <h4 class="card-header-title">Dossiers</h4>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body">
+              <span class="h1 d-block mb-4">{{nb_projets}} dossiers</span>
+
+              <!-- Progress -->
+              <div class="progress rounded-pill mb-2">
+                <div class="progress-bar" role="progressbar" style="width: {{nb_closed_win|divide:nb_projets}}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top" title="Projet soldé"></div>
+                <div class="progress-bar opacity-50" role="progressbar" style="width:{{nb_waiting_for_sample|divide:nb_projets}}%" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top" title="Echantillonage en cours"></div>
+                <div class="progress-bar opacity-25" role="progressbar" style="width:{{nb_waiting|divide:nb_projets}}%" aria-valuenow="9" aria-valuemin="0" aria-valuemax="100" data-bs-toggle="tooltip" data-bs-placement="top" title="En attente de retour client"></div>
+              </div>
+
+              <div class="d-flex justify-content-between mb-4">
+                <span>0%</span>
+                <span>100%</span>
+              </div>
+              <!-- End Progress -->
+
+              <!-- Table -->
+              <div class="table-responsive">
+                <table class="table table-lg table-nowrap card-table mb-0">
+                   <tr>
+                    <th scope="row">
+                      <span class="legend-indicator bg-secondary opacity-25"></span> Projets perdus
+                    </th>
+                    <td> {{nb_closed_lost|divide:nb_projets}} %</td>
+                    <td>
+                      <span class="badge bg-soft-secondary text-secondary"> %</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <span class="legend-indicator bg-primary opacity-25"></span>En attente de retour client
+                    </th>
+                    <td> {{nb_waiting|divide:nb_projets}} %</td>
+                    <td>
+                      <span class="badge bg-soft-secondary text-secondary"> %</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <th scope="row">
+                      <span class="legend-indicator bg-primary opacity-50"></span> Echantillonage en cours
+                    </th>
+                    <td> {{nb_waiting_for_sample|divide:nb_projets}} %</td>
+                    <td>
+                      <span class="badge bg-soft-secondary text-secondary"> %</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">
+                      <span class="legend-indicator bg-primary"></span> Projets soldés
+                    </th>
+                    <td> {{nb_closed_win|divide:nb_projets}} % </td>
+                    <td>
+                      <span class="badge bg-soft-secondary text-secondary"> %</span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+              <!-- End Table -->
+            </div>
+            <!-- End Body -->
+          </div>
+          <!-- End Card -->
+        </div>
+
+        <div class="col-lg-6">
+          <!-- Card -->
+          <div class="card h-100">
+            <!-- Header -->
+            <div class="card-header card-header-content-between">
+              <form class="input-group" method="POST" action="{% url 'report:Todo' %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                <input class="form-control form-control" style='border-radius:30px;' name='content' type="text" placeholder="To do !">
+                <button type = 'submit' class= 'btn btn-outline-primary' style="border-radius:100px; margin-left:10px;"> Ajouter </button>
+                </div>
+            </form>
+            </div>
+            <!-- End Header -->
+
+            <!-- Body -->
+            <div class="card-body" style="max-height:20rem; overflow:scroll;">
+              <table class="table table-borderless  table-nowrap table-align-middle card-table table-hover">
+                <thead class="">
+              {% if todo %}
+                {% for t in todo %}
+                  {% if t.done == False %}
+                <tr>
+                  <th>{{ t.content }}</th>
+                  <th>{{ t.date }}</th>
+                  <th> <a href="{% url 'report:delete_todo' t.pk %}"><i class="bi bi-x"></i></a></th>
+                   {% endif %}
+                </tr>
+                {% endfor %}
+              {% else %}
+                Rien à faire pour le moment...
+
+              {% endif %}
+
+            </thead>
+
+              </table>
+
+
+            </div>
+            <!-- End Body -->
+          </div>
+          <!-- End Card -->
+        </div>
+      </div>
+
+      <!-- Card -->
+      <div class="card mb-3 mb-lg-5 mt-3">
+        <!-- Header -->
+        <div class="card-header">
+          <div class="row justify-content-between align-items-center flex-grow-1">
+            <div class="col-md">
+              <div class="d-flex justify-content-between align-items-center">
+                <h4 class="card-header-title">Répartition dossiers</h4>
+
+                <!-- Datatable Info -->
+                <div id="datatableCounterInfo" style="display: none;">
+                  <div class="d-flex align-items-center">
+                    <span class="fs-6 me-3">
+                      <span id="datatableCounter">0</span>
+                      Selected
+                    </span>
+                    <a class="btn btn-outline-danger btn-sm" href="javascript:;">
+                      <i class="tio-delete-outlined"></i> Delete
+                    </a>
+                  </div>
+                </div>
+                <!-- End Datatable Info -->
+              </div>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-auto">
+              <!-- Filter -->
+              <div class="row align-items-sm-center">
+                <div class="col-md">
+                  <form>
+                    <!-- Search -->
+                    <div class="input-group input-group-merge input-group-flush">
+                      <div class="input-group-prepend input-group-text">
+                        <i class="bi-search"></i>
+                      </div>
+                      <input id="datatableSearch" type="search" class="form-control" placeholder="Rechercher" aria-label="Search users">
+                    </div>
+                    <!-- End Search -->
+                  </form>
+                </div>
+                <!-- End Col -->
+              </div>
+              <!-- End Filter -->
+            </div>
+
+            <div class="raw-auto">
+              <a class='link' style="text-decoration:none;" href="{% url 'report:add' %}"><bi class="bi-folder-plus" style="margin-right:10px;"> Ajouter un dossier</bi></a>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+        <!-- End Header -->
+
+        <!-- Table -->
+        <div class="table-responsive datatable-custom">
+          <table id="datatable" class="table table-borderless table-thead-bordered table-nowrap table-align-middle card-table table-hover" data-hs-datatables-options='{
+                   "columnDefs": [{
+                      "targets": [0, 1, 4],
+                      "orderable": false
+                    }],
+                   "order": [],
+                   "info": {
+                     "totalQty": "#datatableWithPaginationInfoTotalQty"
+                   },
+                   "search": "#datatableSearch",
+                   "entries": "#datatableEntries",
+                   "pageLength": 8,
+                   "isResponsive": false,
+                   "isShowPaging": false,
+                   "pagination": "datatablePagination"
+                 }'>
+            <thead class="thead-light">
+              <tr>
+                <th></th>
+                <th>client</th>
+                <th>Produit</th>
+                <th>Volume (en kg)</th>
+                <th>Marge (en €)</th>
+                <th>Détail</th>
+                <th>Fournisseur</th>
+                <th>Statut</th>
+                <th>Date de début d'opération</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for d in dossier %}
+
+
+              <tr style="font-size:10px;">
+                <td> <a href="{% url 'report:fiche_dossier' d.pk %}"><icon class="bi-folder"></icon></a></td>
+                <td style="overflow:scroll;">{{d.customer}}</td>
+                <td style="overflow:scroll;"> {{d.product}}</td>
+                <td style="overflow:scroll;"> {{d.y_vol}} kg</td>
+                <td style="overflow:scroll;"> {{d.y_mb}} €</td>
+                <td style="overflow:scroll;"> {{d.other}} </td>
+                <td style="overflow:scroll;"> {{d.supplier}} </td>
+                <td style="overflow:scroll;"> {{d.result_next_step}} </td>
+                <td style="overflow:scroll;"> {{d.started_on}} </td>
+                <td style="overflow:scroll;"> <a href="{% url 'report:delete' d.pk %}"><i class="bi-trash3"> </i></a></td>
+
+              </tr>
+
+
+            {% endfor %}
+
+
+
+
+            </tbody>
+          </table>
+        </div>
+        <!-- End Table -->
+
+        <!-- Footer -->
+        <div class="card-footer">
+          <!-- Pagination -->
+          <div class="row justify-content-center justify-content-sm-between align-items-sm-center">
+            <div class="col-sm mb-2 mb-sm-0">
+              <div class="d-flex justify-content-center justify-content-sm-start align-items-center">
+                <span class="me-2">Visible:</span>
+
+                <!-- Select -->
+                <div class="tom-select-custom">
+                  <select id="datatableEntries" class="js-select form-select form-select-borderless w-auto" autocomplete="off" data-hs-tom-select-options='{
+                            "searchInDropdown": false,
+                            "hideSearch": true
+                          }'>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                    <option value="8" selected>8</option>
+                    <option value="12">12</option>
+                  </select>
+                </div>
+                <!-- End Select -->
+
+                <span class="text-secondary me-2">de</span>
+
+                <!-- Pagination Quantity -->
+                <span id="datatableWithPaginationInfoTotalQty"></span>
+              </div>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-sm-auto">
+              <div class="d-flex justify-content-center justify-content-sm-end">
+                <!-- Pagination -->
+                <nav id="datatablePagination" aria-label="Activity pagination"></nav>
+              </div>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Pagination -->
+        </div>
+        <!-- End Footer -->
+      </div>
+      <!-- End Card -->
+
+
+    <!-- End Content -->
+
+    <!-- Footer -->
+
+    <div class="footer">
+      <div class="row justify-content-between align-items-center">
+        <div class="col">
+          <p class="fs-6 mb-0">&copy; Front. <span class="d-none d-sm-inline-block">2022 Htmlstream.</span></p>
+        </div>
+        <!-- End Col -->
+
+        <div class="col-auto">
+          <div class="d-flex justify-content-end">
+            <!-- List Separator -->
+            <ul class="list-inline list-separator">
+              <li class="list-inline-item">
+                <a class="list-separator-link" href="#">FAQ</a>
+              </li>
+
+              <li class="list-inline-item">
+                <a class="list-separator-link" href="#">License</a>
+              </li>
+
+              <li class="list-inline-item">
+                <!-- Keyboard Shortcuts Toggle -->
+                <button class="btn btn-ghost-secondary btn btn-icon btn-ghost-secondary rounded-circle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasKeyboardShortcuts" aria-controls="offcanvasKeyboardShortcuts">
+                  <i class="bi-command"></i>
+                </button>
+                <!-- End Keyboard Shortcuts Toggle -->
+              </li>
+            </ul>
+            <!-- End List Separator -->
+          </div>
+        </div>
+        <!-- End Col -->
+      </div>
+      <!-- End Row -->
+    </div>
+
+    <!-- End Footer -->
+  </main>
+  <!-- ========== END MAIN CONTENT ========== -->
+
+  <!-- ========== SECONDARY CONTENTS ========== -->
+
+  <!-- Keyboard Shortcuts -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasKeyboardShortcuts" aria-labelledby="offcanvasKeyboardShortcutsLabel">
+    <div class="offcanvas-header">
+      <h4 id="offcanvasKeyboardShortcutsLabel" class="mb-0">Keyboard shortcuts</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="list-group list-group-sm list-group-flush list-group-no-gutters mb-5">
+        <div class="list-group-item">
+          <h5 class="mb-1">Formatting</h5>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span class="fw-semibold">Bold</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">b</kbd>
+            </div>
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <em>italic</em>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">i</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <u>Underline</u>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">u</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <s>Strikethrough</s>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Alt</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">s</kbd>
+              <!-- End Col -->
+            </div>
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span class="small">Small text</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">s</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <mark>Highlight</mark>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">e</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+      </div>
+
+      <div class="list-group list-group-sm list-group-flush list-group-no-gutters mb-5">
+        <div class="list-group-item">
+          <h5 class="mb-1">Insert</h5>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Mention person <a href="#">(@Brian)</a></span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">@</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Link to doc <a href="#">(+Meeting notes)</a></span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">+</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <a href="#">#hashtag</a>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">#hashtag</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Date</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">/date</kbd>
+              <kbd class="d-inline-block mb-1">Space</kbd>
+              <kbd class="d-inline-block mb-1">/datetime</kbd>
+              <kbd class="d-inline-block mb-1">/datetime</kbd>
+              <kbd class="d-inline-block mb-1">Space</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Time</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">/time</kbd>
+              <kbd class="d-inline-block mb-1">Space</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Note box</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">/note</kbd>
+              <kbd class="d-inline-block mb-1">Enter</kbd>
+              <kbd class="d-inline-block mb-1">/note red</kbd>
+              <kbd class="d-inline-block mb-1">/note red</kbd>
+              <kbd class="d-inline-block mb-1">Enter</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+      </div>
+
+      <div class="list-group list-group-sm list-group-flush list-group-no-gutters mb-5">
+        <div class="list-group-item">
+          <h5 class="mb-1">Editing</h5>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Find and replace</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">r</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Find next</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">n</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Find previous</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">p</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Indent</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Tab</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Un-indent</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Tab</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Move line up</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1"><i class="bi-arrow-up-short"></i></kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Move line down</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1"><i class="bi-arrow-down-short fs-5"></i></kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Add a comment</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Alt</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">m</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Undo</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">z</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Redo</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">y</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+      </div>
+
+      <div class="list-group list-group-sm list-group-flush list-group-no-gutters">
+        <div class="list-group-item">
+          <h5 class="mb-1">Application</h5>
+        </div>
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Create new doc</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Alt</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">n</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Present</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">p</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Share</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">s</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Search docs</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">o</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+        <div class="list-group-item">
+          <div class="row align-items-center">
+            <div class="col-5">
+              <span>Keyboard shortcuts</span>
+            </div>
+            <!-- End Col -->
+
+            <div class="col-7 text-end">
+              <kbd class="d-inline-block mb-1">Ctrl</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">Shift</kbd> <span class="text-muted small">+</span> <kbd class="d-inline-block mb-1">/</kbd>
+            </div>
+            <!-- End Col -->
+          </div>
+          <!-- End Row -->
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- End Keyboard Shortcuts -->
+
+  <!-- Activity -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasActivityStream" aria-labelledby="offcanvasActivityStreamLabel">
+    <div class="offcanvas-header">
+      <h4 id="offcanvasActivityStreamLabel" class="mb-0">Notifications</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <!-- Step -->
+      <ul class="step step-icon-sm step-avatar-sm">
+        <!-- Step Item -->
+        {% if notif %}
+        <li class="step-item">
+          <div class="step-content-wrapper">
+            <div class="step-avatar">
+              <i style="font-size:30px; color:#377dff;" class="bi bi-card-checklist"></i>
+            </div>
+
+            <div class="step-content">
+              <h5 class="mb-1">Observations</h5>
+              <ul class="list-group list-group-sm mt-4">
+                <!-- List Item -->
+                {% for n in notif %}
+                <li class="step-item">
+                  <div class="row gx-1">
+                    <div class="col-6">
+                      <!-- media -->
+                      <div class="step-content">
+                        <h5 class="mb-1">{{n.content}}  <a href="{% url 'report:fiche_dossier' n.identifier %}">{{n.file}}</a></h5>
+                        <p class="fs-5 mb-1">ajouté par {{n.user}}</p>
+
+
+                        <span class="small text-muted text-uppercase">{{t.date}}</span>
+                      </div>
+                      <!-- End media -->
+                    </div>
+                    <!-- End Col -->
+                  </div>
+                  <!-- End Row -->
+                </li>
+                <!-- End List Item -->
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </li>
+          {% endif %}
+
+        <li class="step-item">
+          <div class="step-content-wrapper">
+            <div class="step-avatar">
+              <i style="font-size:30px; color:#377dff;" class="bi bi-list-task"></i>
+            </div>
+
+            <div class="step-content">
+              <h5 class="mb-1">to do list</h5>
+              <ul class="list-group list-group-sm mt-4">
+                <!-- List Item -->
+                {% for t in todo %}
+                  {% if t.done == False %}
+                <li class="step-item">
+                  <div class="row gx-1">
+                    <div class="col-6">
+                      <!-- media -->
+                      <div class="step-content">
+                        <h5 class="mb-1">{{t.content}} <a style="position:absolute;right:15px;" href="{% url 'report:delete_todo' t.pk %}"><i class="bi bi-x"></i></a></h5>
+                        <span class="small text-muted text-uppercase">{{t.date}}</span>
+                      </div>
+                      <!-- End media -->
+                    </div>
+                    <!-- End Col -->
+                  </div>
+                  <!-- End Row -->
+                </li>
+                <!-- End List Item -->
+                  {% endif%}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </li>
+        <!-- End Step Item -->
+
+        <!-- Step Item -->
+        <li class="step-item">
+          <div class="step-content-wrapper">
+            <div class="step-avatar">
+              <i style="font-size:30px; color:#377dff;" class="bi bi-check2-square"></i>
+            </div>
+
+            <div class="step-content" style="max-height:20rem; overflow:scroll;">
+              <h5 class="mb-1"> Done !</h5>
+              <ul class="list-group list-group-sm mt-4">
+                <!-- List Item -->
+                {% for t in todo %}
+                  {% if t.done == True %}
+                <li class="step-item">
+                  <div class="row gx-1">
+                    <div class="col-6">
+                      <!-- media -->
+                      <div class="step-content">
+                        <h5 class="mb-1">{{t.content}}</h5>
+
+                        <p class="fs-5 mb-1">ajouté par</p>
+
+                        <span class="small text-muted text-uppercase">{{t.date}}</span>
+                      </div>
+                      <!-- End media -->
+                    </div>
+                    <!-- End Col -->
+                  </div>
+                  <!-- End Row -->
+                </li>
+                <!-- End List Item -->
+                {% endif %}
+                {% endfor %}
+
+              </ul>
+            </div>
+          </div>
+        </li>
+        <!-- End Step Item -->
+      </ul>
+      <!-- End Step -->
+    </div>
+  </div>
+  <!-- End Activity -->
+
+  <!-- Welcome Message Modal -->
+  <div class="modal fade" id="welcomeMessageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- Header -->
+        <div class="modal-close">
+          <button type="button" class="btn btn-ghost-secondary btn-icon btn-sm" data-bs-dismiss="modal" aria-label="Close">
+            <i class="bi-x-lg"></i>
+          </button>
+        </div>
+        <!-- End Header -->
+
+        <!-- Body -->
+        <div class="modal-body p-sm-5">
+          <div class="text-center">
+            <div class="w-75 w-sm-50 mx-auto mb-4">
+              <img class="img-fluid" src="{%static 'svg/illustrations/oc-collaboration.svg'%}" alt="Image Description" data-hs-theme-appearance="default">
+              <img class="img-fluid" src="{%static 'svg/illustrations-light/oc-collaboration.svg'%}" alt="Image Description" data-hs-theme-appearance="dark">
+            </div>
+
+            <h4 class="h1">Welcome to Front</h4>
+
+            <p>We're happy to see you in our community.</p>
+          </div>
+        </div>
+        <!-- End Body -->
+
+        <!-- Footer -->
+        <div class="modal-footer d-block text-center py-sm-5">
+          <small class="text-cap text-muted">Trusted by the world's best teams</small>
+
+          <div class="w-85 mx-auto">
+            <div class="row justify-content-between">
+              <div class="col">
+                <img class="img-fluid" src="{%static 'svg/brands/gitlab-gray.svg'%}" alt="Image Description">
+              </div>
+              <div class="col">
+                <img class="img-fluid" src="{%static 'svg/brands/fitbit-gray.svg'%}" alt="Image Description">
+              </div>
+              <div class="col">
+                <img class="img-fluid" src="{%static 'svg/brands/flow-xo-gray.svg'%}" alt="Image Description">
+              </div>
+              <div class="col">
+                <img class="img-fluid" src="{%static 'svg/brands/layar-gray.svg'%}" alt="Image Description">
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Footer -->
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- End Welcome Message Modal -->
+
+  <!-- Create a new user Modal -->
+  <!-- End Create a new user Modal -->
+  <!-- ========== END SECONDARY CONTENTS ========== -->
+
+  <!-- JS Global Compulsory  -->
+  <script src="{%static 'vendor/jquery/dist/jquery.min.js'%}"></script>
+  <script src="{%static 'vendor/jquery-migrate/dist/jquery-migrate.min.js'%}"></script>
+  <script src="{%static 'vendor/bootstrap/dist/js/bootstrap.bundle.min.js'%}"></script>
+
+  <!-- JS Implementing Plugins -->
+  <script src="{%static 'vendor/hs-navbar-vertical-aside/dist/hs-navbar-vertical-aside.min.js'%}"></script>
+  <script src="{%static 'vendor/hs-form-search/dist/hs-form-search.min.js'%}"></script>
+
+  <script src="{%static 'vendor/chart.js/dist/Chart.min.js'%}"></script>
+  <script src="{%static 'vendor/chartjs-chart-matrix/dist/chartjs-chart-matrix.min.js'%}"></script>
+  <script src="{%static 'vendor/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.min.js'%}"></script>
+  <script src="{%static 'vendor/daterangepicker/moment.min.js'%}"></script>
+  <script src="{%static 'vendor/daterangepicker/daterangepicker.js'%}"></script>
+  <script src="{%static 'vendor/tom-select/dist/js/tom-select.complete.min.js'%}"></script>
+  <script src="{%static 'vendor/clipboard/dist/clipboard.min.js'%}"></script>
+  <script src="{%static 'vendor/datatables/media/js/jquery.dataTables.min.js'%}"></script>
+  <script src="{%static 'vendor/datatables.net.extensions/select/select.min.js'%}"></script>
+
+  <!-- JS Front -->
+  <script src="{%static 'js/theme.min.js'%}"></script>
+  <script src="{%static 'js/hs.theme-appearance-charts.js'%}"></script>
+
+  <!-- JS Plugins Init. -->
+  <script>
+    $(document).on('ready', function () {
+      // INITIALIZATION OF DATERANGEPICKER
+      // =======================================================
+      $('.js-daterangepicker').daterangepicker();
+
+      $('.js-daterangepicker-times').daterangepicker({
+        timePicker: true,
+        startDate: moment().startOf('hour'),
+        endDate: moment().startOf('hour').add(32, 'hour'),
+        locale: {
+          format: 'M/DD hh:mm A'
+        }
+      });
+
+      var start = moment();
+      var end = moment();
+
+      function cb(start, end) {
+        $('#js-daterangepicker-predefined .js-daterangepicker-predefined-preview').html(start.format('MMM D') + ' - ' + end.format('MMM D, YYYY'));
+      }
+
+      $('#js-daterangepicker-predefined').daterangepicker({
+        startDate: start,
+        endDate: end,
+        ranges: {
+          'Today': [moment(), moment()],
+          'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+          'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+          'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+          'This Month': [moment().startOf('month'), moment().endOf('month')],
+          'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+      }, cb);
+
+      cb(start, end);
+    });
+
+
+    // INITIALIZATION OF DATATABLES
+    // =======================================================
+    HSCore.components.HSDatatables.init($('#datatable'), {
+      select: {
+        style: 'multi',
+        selector: 'td:first-child input[type="checkbox"]',
+        classMap: {
+          checkAll: '#datatableCheckAll',
+          counter: '#datatableCounter',
+          counterInfo: '#datatableCounterInfo'
+        }
+      },
+      language: {
+        zeroRecords: `<div class="text-center p-4">
+              <img class="mb-3" src="{%static 'svg/illustrations/oc-error.svg'%}" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="default">
+              <img class="mb-3" src="{%static 'svg/illustrations-light/oc-error.svg'%}" alt="Image Description" style="width: 10rem;" data-hs-theme-appearance="dark">
+            <p class="mb-0">No data to show</p>
+            </div>`
+      }
+    });
+
+    const datatable = HSCore.components.HSDatatables.getItem(0)
+
+    document.querySelectorAll('.js-datatable-filter').forEach(function (item) {
+      item.addEventListener('change',function(e) {
+        const elVal = e.target.value,
+    targetColumnIndex = e.target.getAttribute('data-target-column-index'),
+    targetTable = e.target.getAttribute('data-target-table');
+
+    HSCore.components.HSDatatables.getItem(targetTable).column(targetColumnIndex).search(elVal !== 'null' ? elVal : '').draw()
+      })
+    })
+  </script>
+
+  <!-- JS Plugins Init. -->
+  <script>
+    (function() {
+      localStorage.removeItem('hs_theme')
+
+      window.onload = function () {
+
+
+        // INITIALIZATION OF NAVBAR VERTICAL ASIDE
+        // =======================================================
+        new HSSideNav('.js-navbar-vertical-aside').init()
+
+
+        // INITIALIZATION OF FORM SEARCH
+        // =======================================================
+        const HSFormSearchInstance = new HSFormSearch('.js-form-search')
+
+        if (HSFormSearchInstance.collection.length) {
+          HSFormSearchInstance.getItem(1).on('close', function (el) {
+            el.classList.remove('top-0')
+          })
+
+          document.querySelector('.js-form-search-mobile-toggle').addEventListener('click', e => {
+            let dataOptions = JSON.parse(e.currentTarget.getAttribute('data-hs-form-search-options')),
+              $menu = document.querySelector(dataOptions.dropMenuElement)
+
+            $menu.classList.add('top-0')
+            $menu.style.left = 0
+          })
+        }
+
+
+        // INITIALIZATION OF BOOTSTRAP DROPDOWN
+        // =======================================================
+        HSBsDropdown.init()
+
+
+        // INITIALIZATION OF CHARTJS
+        // =======================================================
+        HSCore.components.HSChartJS.init('.js-chart')
+
+
+        // INITIALIZATION OF CHARTJS
+        // =======================================================
+        HSCore.components.HSChartJS.init('#updatingBarChart')
+        const updatingBarChart = HSCore.components.HSChartJS.getItem('updatingBarChart')
+
+        // Call when tab is clicked
+        document.querySelectorAll('[data-bs-toggle="chart-bar"]').forEach(item => {
+          item.addEventListener('click', e => {
+            let keyDataset = e.currentTarget.getAttribute('data-datasets')
+
+            const styles = HSCore.components.HSChartJS.getTheme('updatingBarChart', HSThemeAppearance.getAppearance())
+
+            if (keyDataset === 'lastWeek') {
+              updatingBarChart.data.labels = ["Apr 22", "Apr 23", "Apr 24", "Apr 25", "Apr 26", "Apr 27", "Apr 28", "Apr 29", "Apr 30", "Apr 31"];
+              updatingBarChart.data.datasets = [
+                {
+                  "data": [120, 250, 300, 200, 300, 290, 350, 100, 125, 320],
+                  "backgroundColor": styles.data.datasets[0].backgroundColor,
+                  "hoverBackgroundColor": styles.data.datasets[0].hoverBackgroundColor,
+                  "borderColor": styles.data.datasets[0].borderColor,
+                  "maxBarThickness": 10
+                },
+                {
+                  "data": [250, 130, 322, 144, 129, 300, 260, 120, 260, 245, 110],
+                  "backgroundColor": styles.data.datasets[1].backgroundColor,
+                  "borderColor": styles.data.datasets[1].borderColor,
+                  "maxBarThickness": 10
+                }
+              ];
+              updatingBarChart.update();
+            } else {
+              updatingBarChart.data.labels = ["May 1", "May 2", "May 3", "May 4", "May 5", "May 6", "May 7", "May 8", "May 9", "May 10"];
+              updatingBarChart.data.datasets = [
+                {
+                  "data": [200, 300, 290, 350, 150, 350, 300, 100, 125, 220],
+                  "backgroundColor": styles.data.datasets[0].backgroundColor,
+                  "hoverBackgroundColor": styles.data.datasets[0].hoverBackgroundColor,
+                  "borderColor": styles.data.datasets[0].borderColor,
+                  "maxBarThickness": 10
+                },
+                {
+                  "data": [150, 230, 382, 204, 169, 290, 300, 100, 300, 225, 120],
+                  "backgroundColor": styles.data.datasets[1].backgroundColor,
+                  "borderColor": styles.data.datasets[1].borderColor,
+                  "maxBarThickness": 10
+                }
+              ]
+              updatingBarChart.update();
+            }
+          })
+        })
+
+
+        // INITIALIZATION OF CHARTJS
+        // =======================================================
+        HSCore.components.HSChartJS.init('.js-chart-datalabels', {
+          plugins: [ChartDataLabels],
+          options: {
+            plugins: {
+              datalabels: {
+                anchor: function (context) {
+                  var value = context.dataset.data[context.dataIndex];
+                  return value.r < 20 ? 'end' : 'center';
+                },
+                align: function (context) {
+                  var value = context.dataset.data[context.dataIndex];
+                  return value.r < 20 ? 'end' : 'center';
+                },
+                color: function (context) {
+                  var value = context.dataset.data[context.dataIndex];
+                  return value.r < 20 ? context.dataset.backgroundColor : context.dataset.color;
+                },
+                font: function (context) {
+                  var value = context.dataset.data[context.dataIndex],
+                    fontSize = 25;
+
+                  if (value.r > 50) {
+                    fontSize = 35;
+                  }
+
+                  if (value.r > 70) {
+                    fontSize = 55;
+                  }
+
+                  return {
+                    weight: 'lighter',
+                    size: fontSize
+                  };
+                },
+                formatter: function (value) {
+                  return value.r
+                },
+                offset: 2,
+                padding: 0
+              }
+            },
+          }
+        })
+
+        // INITIALIZATION OF SELECT
+        // =======================================================
+        HSCore.components.HSTomSelect.init('.js-select')
+
+
+        // INITIALIZATION OF CLIPBOARD
+        // =======================================================
+        HSCore.components.HSClipboard.init('.js-clipboard')
+      }
+    })()
+  </script>
+
+  <!-- Style Switcher JS -->
+
+  <script>
+      (function () {
+        // STYLE SWITCHER
+        // =======================================================
+        const $dropdownBtn = document.getElementById('selectThemeDropdown') // Dropdowon trigger
+        const $variants = document.querySelectorAll(`[aria-labelledby="selectThemeDropdown"] [data-icon]`) // All items of the dropdown
+
+        // Function to set active style in the dorpdown menu and set icon for dropdown trigger
+        const setActiveStyle = function () {
+          $variants.forEach($item => {
+            if ($item.getAttribute('data-value') === HSThemeAppearance.getOriginalAppearance()) {
+              $dropdownBtn.innerHTML = `<i class="${$item.getAttribute('data-icon')}" />`
+              return $item.classList.add('active')
+            }
+
+            $item.classList.remove('active')
+          })
+        }
+
+        // Add a click event to all items of the dropdown to set the style
+        $variants.forEach(function ($item) {
+          $item.addEventListener('click', function () {
+            HSThemeAppearance.setAppearance($item.getAttribute('data-value'))
+          })
+        })
+
+        // Call the setActiveStyle on load page
+        setActiveStyle()
+
+        // Add event listener on change style to call the setActiveStyle function
+        window.addEventListener('on-hs-appearance-change', function () {
+          setActiveStyle()
+        })
+      })()
+    </script>
+
+
+
+
+  <!-- Style Switcher JS -->
+
+  <script>
+      (function () {
+        // STYLE SWITCHER
+        // =======================================================
+        const $dropdownBtn = document.getElementById('selectThemeDropdown') // Dropdowon trigger
+        const $variants = document.querySelectorAll(`[aria-labelledby="selectThemeDropdown"] [data-icon]`) // All items of the dropdown
+
+        // Function to set active style in the dorpdown menu and set icon for dropdown trigger
+        const setActiveStyle = function () {
+          $variants.forEach($item => {
+            if ($item.getAttribute('data-value') === HSThemeAppearance.getOriginalAppearance()) {
+              $dropdownBtn.innerHTML = `<i class="${$item.getAttribute('data-icon')}" />`
+              return $item.classList.add('active')
+            }
+
+            $item.classList.remove('active')
+          })
+        }
+
+        // Add a click event to all items of the dropdown to set the style
+        $variants.forEach(function ($item) {
+          $item.addEventListener('click', function () {
+            HSThemeAppearance.setAppearance($item.getAttribute('data-value'))
+          })
+        })
+
+        // Call the setActiveStyle on load page
+        setActiveStyle()
+
+        // Add event listener on change style to call the setActiveStyle function
+        window.addEventListener('on-hs-appearance-change', function () {
+          setActiveStyle()
+        })
+      })()
+
+      document.querySelector("#ajax-call").addEventListener("click", event => {
+            event.preventDefault();
+            let formData = new FormData();
+            formData.append('agent', document.querySelector("#agent").value);
+
+            // On récupère la valeur du jeton CSRF
+            let csrfTokenValue = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            const request = new Request('', {
+                method: 'POST',
+                body: formData,
+                headers: {'X-CSRFToken': csrfTokenValue}  // On ajoute le token dans l'en-tête
+            });
+
+            // On exécute la requête
+            fetch(request)
+                .then(response => response.json())
+          })
+
+    </script>
+
+  <script>
+    var m = document.getElementsByClassName("alert");  // Return an array
+
+    setTimeout(function(){
+       if (m && m.length) {
+           m[0].classList.add('hide');
+       }
+    }, 3000);
+    </script>
+
+  <!-- End Style Switcher JS -->
+</body>
+</html>
