@@ -122,3 +122,5 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'CodingWithMitch Team <noreply@codingwithmitch.com>'
 
 BASE_URL = "http://68.183.82.143"
+LOGIN_URL = '/LogIn/'
+
