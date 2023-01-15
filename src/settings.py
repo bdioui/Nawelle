@@ -20,7 +20,7 @@ from decouple import config
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ["68.183.82.143",]
+ALLOWED_HOSTS = ["68.183.82.143", "www.baseprojet.com", "baseprojet.com"]
 
 ROOT_URLCONF = f'{config("PROJECT_NAME")}.urls'
 
